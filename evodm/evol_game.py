@@ -1,4 +1,4 @@
-from evodm.landscapes import Landscape
+from .landscapes import Landscape
 import numpy as np
 from tensorflow.keras.utils import to_categorical
 import math
@@ -135,14 +135,14 @@ class evol_env:
             self.actions = [(i,j) for i in self.drugs.keys() for j in range(self.num_conc)]
             self.action = ('gefitinib',0) #first action - value will be updated by the learner
         else:
-            self.ACTIONS = [i for i in range(1, self.num_drugs + 1)]
-            self.action = 1 #first action - value will be updated by the learner
-            self.prev_action = 1.0 #pretend this is the second time seeing it why not
+            self.ACTIONS = [i for i in range(self.num_drugs)] # 0-indexed actions
+            self.action = 0 #first action - value will be updated by the learner
+            self.prev_action = 0.0 #pretend this is the second time seeing it why not
 
     def define_landscapes(self, drugs, normalize_drugs):
         #default behavior is to generate landscapes completely at random. 
         #define landscapes #this step is a beast - let's pull this out into it's own function
-        if drugs is None: 
+        if drugs is None:
             ## Generate landscapes - use whatever parameters were set in main()
             self.landscapes, self.drugs = generate_landscapes(N = self.N, 
                                                   sigma = self.sigma,
@@ -150,7 +150,7 @@ class evol_env:
                                                   correl=self.correl, 
                                                   dense = self.DENSE,
                                                   CS=self.CS)
-       
+
         else:
             self.drugs = drugs
         #Normalize landscapes if directed
@@ -189,11 +189,11 @@ class evol_env:
         self.update_target_counter +=1
         
         # Run the sim under the assigned conditions
-        if self.action not in self.ACTIONS:
-            return("the action must be in env.ACTIONS")
+        if self.action not in self.ACTIONS: # Check if action is valid
+            raise ValueError(f"Invalid action {self.action}. Must be one of {self.ACTIONS}")
         fitness, state_vector = run_sim(evol_steps = self.NUM_EVOLS,
                                         state_vector = self.state_vector,
-                                        ls = self.landscapes[self.action-1], 
+                                        ls = self.landscapes[self.action], # Use 0-indexed action
                                         average_outcomes=self.AVERAGE_OUTCOMES)
         
         
@@ -273,7 +273,7 @@ class evol_env:
         else: 
             prev_fitness = self.fitness
 
-        prev_action_cat = to_categorical(self.prev_action-1, num_classes = len(self.ACTIONS)) #-1 because of the dumb python indexing system
+        prev_action_cat = to_categorical(self.prev_action, num_classes = len(self.ACTIONS)) # Use 0-indexed action
         prev_action_cat = np.ndarray.tolist(prev_action_cat) #convert to list
 
         #This checks if fitness is a list (will occur if num_evols > 1)
@@ -283,8 +283,7 @@ class evol_env:
                 prev_action_cat.append(prev_fitness[i])
         else:
             prev_action_cat.append(prev_fitness)
-
-        action_cat = to_categorical(self.action-1, num_classes = len(self.ACTIONS))
+        action_cat = to_categorical(self.action, num_classes = len(self.ACTIONS)) # Use 0-indexed action
         action_cat = np.ndarray.tolist(action_cat)
          #This checks if fitness is a list (will occur if num_evols > 1)
         if isinstance(fitness, list):  
@@ -311,7 +310,7 @@ class evol_env:
         #function to compute the average fitness to all available drugs in the panel
         fitnesses = []
         for i in iter(self.ACTIONS):
-            fitness = np.dot(self.drugs[i-1], self.state_vector)
+            fitness = np.dot(self.drugs[i], self.state_vector) # Use 0-indexed action
             fitnesses.append(fitness)
 
         return np.mean(fitnesses)
@@ -399,14 +398,14 @@ class evol_env:
         self.episode_number += 1
 
         #re-initialize the action number
-        self.action = 1
+        self.action = 0 # Use 0-indexed action
 
         #re-initialize victory conditions
         self.pop_wcount = 0
         self.player_wcount = 0
         self.done = False
         #re-calculate fitness with the new state_vector
-        self.fitness = [np.dot(self.drugs[self.action-1], self.state_vector)]
+        self.fitness = [np.dot(self.drugs[self.action], self.state_vector)] # Use 0-indexed action
         if self.NOISE_BOOL: 
             self.fitness = self.add_noise(self.fitness)
         self.sensor = []
@@ -840,7 +839,3 @@ class evol_env_wf:
             H += (allele_proportion * math.log(allele_proportion))
         
         return -H
-
-
-
-

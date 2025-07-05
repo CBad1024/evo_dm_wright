@@ -8,8 +8,8 @@ from tensorflow.python.keras.layers import deserialize, serialize
 from tensorflow.python.keras.saving import saving_utils
 from tensorflow.keras.utils import to_categorical
 from collections import deque
-from evodm.evol_game import evol_env, evol_env_wf
-from evodm.dpsolve import backwards_induction, dp_env
+from .evol_game import evol_env, evol_env_wf
+from .dpsolve import backwards_induction, dp_env
 import random
 import numpy as np 
 from copy import deepcopy
@@ -255,7 +255,7 @@ class DrugSelector:
 
             # Update Q value for given state
             current_qs = current_qs_list[index]
-            current_qs[action - 1] = new_q #again we need the minus 1 because of the dumb python indexing system
+            current_qs[action] = new_q # Use 0-indexed action
 
             # And append to our training data
             X.append(current_state)
@@ -408,11 +408,11 @@ def compute_optimal_action(agent, policy, step, prev_action = False):
 
     if prev_action:
         if agent.env.TRAIN_INPUT == "state_vector": 
-            action = np.argmax(policy[index]) + 1 
+            action = np.argmax(policy[index]) # Use 0-indexed action
         else:
-            action = policy[index][int(agent.env.prev_action)-1] +1#plus one because I made the bad decision to force the actions to be 1-indexed once upons a time
+            action = policy[index][int(agent.env.prev_action)] # Use 0-indexed action
     else:
-        action = policy[index][step] + 1 #plus one because I made the bad decision to force the actions to be 1,2,3,4 once upon a time
+        action = policy[index][step] # Use 0-indexed action
     
     return action
     
@@ -497,7 +497,7 @@ def practice(agent, naive = False, standard_practice = False,
                     if wf:
                         agent.env.update_drug(np.argmax(agent.get_qs()))
                     else:
-                        agent.env.action = np.argmax(agent.get_qs()) + 1 #plus one because of the stupid fucking indexing system
+                        agent.env.action = np.argmax(agent.get_qs()) # Use 0-indexed action
             else:
                 # Get random action
                 if standard_practice and not wf:
@@ -510,7 +510,7 @@ def practice(agent, naive = False, standard_practice = False,
                 elif wf:
                     agent.env.update_drug(random.randint(np.min(agent.env.ACTIONS),np.max(agent.env.ACTIONS)))
                 else: 
-                    agent.env.action = random.randint(np.min(agent.env.ACTIONS),np.max(agent.env.ACTIONS))
+                    agent.env.action = random.choice(agent.env.ACTIONS) # Use random.choice for list of actions
 
 
             #we don't save anything - it stays in the class
@@ -578,6 +578,3 @@ def practice(agent, naive = False, standard_practice = False,
         policy = []
         V = []
     return reward_list, agent, policy, V
-
-
-
