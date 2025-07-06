@@ -200,17 +200,26 @@ class DrugSelector:
         model.compile(loss="mse", optimizer=Adam(learning_rate=self.hp.LEARNING_RATE), metrics=['accuracy'])
         return model
 
-    def update_replay_memory(self):
-        
+    def update_replay_memory(self, transition):
         if self.env.action_number > 1 + self.hp.DELAY:
-            self.replay_memory.append(self.env.sensor)
-            #update master memory - for diagnostic purposes only
-            if self.hp.MASTER_MEMORY:
-                if self.env.TRAIN_INPUT == "fitness":
-                    #want to save the state vector history somewhere, regardless of what we use for training. 
-                    self.master_memory.append([self.env.episode_number, self.env.action_number, self.env.sensor, self.env.state_vector, self.env.fitness])
-                else:
-                    self.master_memory.append([self.env.episode_number, self.env.action_number, self.env.sensor, self.env.fitness]) #also record real fitness instead of sensor fitness
+        self.replay_memory.append(transition)
+
+        if self.hp.MASTER_MEMORY:
+            if self.env.TRAIN_INPUT == "fitness":
+                self.master_memory.append([
+                    self.env.episode_number,
+                    self.env.action_number,
+                    transition,
+                    self.env.state_vector,
+                    self.env.fitness
+                ])
+            else:
+                self.master_memory.append([
+                    self.env.episode_number,
+                    self.env.action_number,
+                    transition,
+                    self.env.fitness
+                ])
         # Trains main network every step during episode
       #gonna chunk this out so I can actually test it
     def train(self):
@@ -465,12 +474,12 @@ def practice(agent, naive = False, standard_practice = False,
     #format is [average_reward, min_reward, max_reward]
     reward_list = []
     #initialize list of per episode rewards
-    #ep_rewards = []
+    ep_rewards = []
     count=1
     for episode in tqdm(range(1, num_episodes + 1), ascii=True, unit='episodes',
                         disable = True if any([dp_solution, naive, pre_trained]) else False):
         # Restarting episode - reset episode reward and step number
-        #episode_reward = 0
+        episode_reward = 0
         if pre_trained:
             agent.hp.epsilon = 0
 
@@ -518,8 +527,8 @@ def practice(agent, naive = False, standard_practice = False,
             #we don't save anything - it stays in the class
             agent.env.step()
 
-            #reward = agent.env.sensor[2]
-            #episode_reward += reward
+            reward = agent.env.sensor[2]
+            episode_reward += reward
 
             # Every step we update replay memory and train main network - only train if we are doing a not naive run
             agent.update_replay_memory()
