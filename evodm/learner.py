@@ -275,12 +275,13 @@ class DrugSelector:
             self.target_update_counter = 0
 
     def enumerate_batch(self, minibatch, future_qs_list, current_qs_list):
-        """Function to enumerate batch and generate X/y for training"""
+        """Function to enumerate batch and generate X/y for training -- this is where q table is updated"""
         X = []
         y = []
 
         for index, (current_state, action, reward, new_current_state, done) in enumerate(minibatch):
             # If not a terminal state, get new q from future states, otherwise set it to 0
+            #THIS IS THE BELLMAN OPTIMALITY EQUATION
             if not done:
                 max_future_q = np.max(future_qs_list[index])
                 new_q = reward + self.hp.DISCOUNT * max_future_q
