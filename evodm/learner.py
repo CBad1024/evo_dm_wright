@@ -485,8 +485,8 @@ def practice(agent, naive=False, standard_practice=False,
     train_freq: int
         how many time steps should pass between training the model.
 
-    Returns rewards, agent, policy
-        reward vector, trained agent including master memory dictating what happened, and learned policy (if applicable)
+    Returns rewards, agent, policy, value funtion
+        reward vector, trained agent including master memory dictating what happened,  learned policy (if applicable), and value function (if dynamic programming solution is used -- not RL)
     '''
     if num_episodes == 0:
         num_episodes = agent.hp.EPISODES
@@ -510,13 +510,14 @@ def practice(agent, naive=False, standard_practice=False,
                         disable=True if any([dp_solution, naive, pre_trained]) else False):
 
         episode_reward = 0
-
+        #PRETRAINED
         if pre_trained:
             agent.hp.epsilon = 0
 
         # Initialize variables for transition storage
         current_state = None
         action = None
+
 
         for i in range(agent.hp.RESET_EVERY + 1):
             if i == 0:
@@ -530,14 +531,17 @@ def practice(agent, naive=False, standard_practice=False,
             prev_state = current_state
             prev_action = action
 
-            # Choose action based on policy
+
+            # This is exploitation;
             if np.random.random() > agent.hp.epsilon:
                 if naive:
                     if standard_practice and not wf:
                         if np.mean(agent.env.fitness) > 0.9:
-                            avail_actions = [a for a in agent.env.ACTIONS if a != agent.env.action]
-                            action = random.sample(avail_actions, k=1)[0]
-                        else:
+                            #In naive model, choose randomly from available actions weighted based on q values
+                            #FIXME THE logic for the random action in broken.
+                            available_actions = [a for a in agent.env.ACTIONS if a != agent.env.action]
+                            action = random.sample(available_actions, k=1)[0]
+                        else: #if fitness is already being minimized well, maintain current action
                             action = agent.env.action
                     else:
                         if wf:
@@ -546,13 +550,16 @@ def practice(agent, naive=False, standard_practice=False,
                         else:
                             action = random.randint(np.min(agent.env.ACTIONS), np.max(agent.env.ACTIONS))
                             agent.env.action = action
+
+
+                #Only for if a solution is given
                 elif dp_solution:
                     action = compute_optimal_action(agent, dp_policy, step=i_fixed, prev_action=prev_action)
                     if wf:
                         agent.env.update_drug(action)
                     else:
                         agent.env.action = action
-                else:
+                else: ##nonnaive model
                     action = np.argmax(agent.get_qs())
                     if wf:
                         agent.env.update_drug(action)
