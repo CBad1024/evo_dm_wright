@@ -1,10 +1,19 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.2
 Name: evodm
 Version: 1.1.2
-Summary: UNKNOWN
-Home-page: UNKNOWN
 Author: Davis Weaver
 Author-email: dtw43@case.edu
-License: UNKNOWN
-Description: UNKNOWN
-Platform: UNKNOWN
+License-File: LICENSE.md
+Requires-Dist: tensorflow~=2.18.0
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: networkx
+Requires-Dist: pytest
+Requires-Dist: tqdm
+Requires-Dist: pymdptoolbox
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: ruptures
+Dynamic: author
+Dynamic: author-email
+Dynamic: requires-dist
