@@ -82,7 +82,7 @@ class hyperparameters:
         self.DENSE = False #will transition matrix be stored in dense or sparse format?
         # new evolutionary "game" every n steps or n *num_evols total evolutionary movements
         self.RESET_EVERY = 20
-        self.EPISODES = 1000 #FIXME needs to be 500, will change later
+        self.EPISODES = 10 #FIXME needs to be 500, will change later
         self.N = 5
         self.RANDOM_START = False
         self.STARTING_GENOTYPE = 0 #default to starting at the wild type genotype
