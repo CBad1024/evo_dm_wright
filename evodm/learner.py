@@ -420,7 +420,7 @@ def compute_optimal_action(agent, policy, step, prev_action = False):
 def practice(agent, naive = False, standard_practice = False, 
              dp_solution = False, pre_trained = False, discount_rate = 0.99,
              policy = "none", prev_action = False, wf = False, train_freq = 1, 
-             compute_implied_policy_bool = False):
+             compute_implied_policy_bool = False, num_episodes = 0):
     '''
     Function that iterates through simulations to train the agent. Also used to test general drug cycling policies as controls for evodm 
     ...
@@ -448,6 +448,8 @@ def practice(agent, naive = False, standard_practice = False,
     Returns rewards, agent, policy 
         reward vector, trained agent including master memory dictating what happened, and learned policy (if applicable)
     '''
+    if num_episodes == 0:
+        num_episodes = agent.hp.EPISODES
     if dp_solution and not wf:
         dp_policy, V = compute_optimal_policy(agent, discount_rate = discount_rate,
                                               num_steps = agent.hp.RESET_EVERY)
