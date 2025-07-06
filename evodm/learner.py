@@ -467,7 +467,7 @@ def practice(agent, naive = False, standard_practice = False,
     #initialize list of per episode rewards
     #ep_rewards = []
     count=1
-    for episode in tqdm(range(1, agent.hp.EPISODES + 1), ascii=True, unit='episodes', 
+    for episode in tqdm(range(1, num_episodes + 1), ascii=True, unit='episodes',
                         disable = True if any([dp_solution, naive, pre_trained]) else False):
         # Restarting episode - reset episode reward and step number
         #episode_reward = 0
