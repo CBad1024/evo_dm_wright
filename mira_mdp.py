@@ -110,13 +110,13 @@ def main():
     print("\nUsing non-naive RL to solve system:")
     rewards_NN, agent_NN, _, __ = practice(learner_env, prev_action=True, compute_implied_policy_bool=True, train_freq=5)
     policy_NN_one_hot = agent_NN.compute_implied_policy(update = True)
-    policy_NN = [np.argmax(a) for a in policy_NN_one_hot]
+    policy_NN = np.array([np.argmax(a) for a in policy_NN_one_hot])
     print("policy shape under non-naive RL: ", policy_NN)
 
     print("\nUsing naive RL agent to solve system...")
     rewards_N, agent_N, _, __= practice(learner_env_naive, prev_action=False, standard_practice=True, compute_implied_policy_bool=True, train_freq = 5)
     policy_N_one_hot = agent_N.compute_implied_policy(update = True)
-    policy_N = [np.argmax(a) for a in policy_N_one_hot]
+    policy_N = np.array([np.argmax(a) for a in policy_N_one_hot])
     print("policy shape under naive RL: ", policy_N)
 
 
