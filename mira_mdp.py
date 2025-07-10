@@ -16,7 +16,7 @@ def mira_env():
                    train_input='fitness')
     # The DrugSelector agent is for the RL algorithm. It requires an hp object.
     hp = hyperparameters()
-    hp.N = 4 # Ensure N is set for hyperparameters
+    hp.N = 3 # Ensure N is set for hyperparameters
     hp.NUM_DRUGS = 4 # Ensure NUM_DRUGS is set for hyperparameters
     hp.EPISODES = 500
     hp.MIN_REPLAY_MEMORY_SIZE = 1000
