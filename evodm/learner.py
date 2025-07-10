@@ -75,7 +75,7 @@ class hyperparameters:
         self.epsilon = 1  # lowercase because its not a constant
         self.EPSILON_DECAY = 0.95
         self.MIN_EPSILON = 0.001
-        self.LEARNING_RATE = 0.0001
+        self.LEARNING_RATE = 0.005
 
         # settings control the evolutionary simulation
         self.NUM_EVOLS = 1  # how many evolutionary steps per time step
