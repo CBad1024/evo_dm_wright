@@ -20,7 +20,10 @@ def mira_env():
     hp.NUM_DRUGS = 4 # Ensure NUM_DRUGS is set for hyperparameters
     hp.EPISODES = 500
     hp.MIN_REPLAY_MEMORY_SIZE = 1000
-    hp.MINIBATCH_SIZE = 100
+    hp.MINIBATCH_SIZE = 5000
+    print("changed minibatch size: Minibatch = ", hp.MINIBATCH_SIZE)
+    print("min replay memory size: ", hp.MIN_REPLAY_MEMORY_SIZE)
+    print("num_episodes: ", hp.EPISODES)
     learner_env = DrugSelector(hp=hp, drugs=drugs)
     learner_env_naive = DrugSelector(hp=hp, drugs=drugs)
     return envdp, env, learner_env, learner_env_naive #, naive_learner_env # Removed for simplicity, can be added back if needed
