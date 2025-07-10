@@ -8,7 +8,7 @@ import pandas as pd
 def mira_env():
     """Initializes the MDP environment and a simulation environment."""
     drugs = define_mira_landscapes()
-    drug_sample = [drugs[0], drugs[3], drugs[10], drugs[13]]
+
     # The dp_env is for solving the MDP
     envdp = dp_env(N=4, num_drugs=15, drugs=drugs, sigma=0.5)
     # The evol_env is for simulating policies
@@ -17,12 +17,12 @@ def mira_env():
     # The DrugSelector agent is for the RL algorithm. It requires an hp object.
     hp = hyperparameters()
     hp.N = 4 # Ensure N is set for hyperparameters
-    hp.NUM_DRUGS = 15 # Ensure NUM_DRUGS is set for hyperparameters
+    hp.NUM_DRUGS = 4 # Ensure NUM_DRUGS is set for hyperparameters
     hp.EPISODES = 500
     hp.MIN_REPLAY_MEMORY_SIZE = 1000
     hp.MINIBATCH_SIZE = 100
-    learner_env = DrugSelector(hp=hp, drugs=drug_sample)
-    learner_env_naive = DrugSelector(hp=hp, drugs=drug_sample)
+    learner_env = DrugSelector(hp=hp, drugs=drugs)
+    learner_env_naive = DrugSelector(hp=hp, drugs=drugs)
     return envdp, env, learner_env, learner_env_naive #, naive_learner_env # Removed for simplicity, can be added back if needed
 
 #generate drug sequences using policies from backwards induction,
