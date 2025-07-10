@@ -6,5 +6,6 @@
     <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright/evo_dm_wright" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright/evo_dm_wright/evo_dm_wright" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/summer_project_evo" vcs="Git" />
   </component>
 </project>
