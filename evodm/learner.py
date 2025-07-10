@@ -65,7 +65,7 @@ class hyperparameters:
         self.REPLAY_MEMORY_SIZE = 10000
         self.MASTER_MEMORY = True
         self.MIN_REPLAY_MEMORY_SIZE = 1000
-        self.MINIBATCH_SIZE = 100
+        self.MINIBATCH_SIZE = 256
         self.UPDATE_TARGET_EVERY = 310  # every 500 steps, update the target
         self.TRAIN_INPUT = "state_vector"
         self.DELAY = 0
