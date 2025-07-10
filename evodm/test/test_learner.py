@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 from evodm.learner import compute_optimal_policy, compute_optimal_action, DrugSelector, practice, hyperparameters
 from evodm.dpsolve import backwards_induction, dp_env
 from evodm.exp import define_mira_landscapes
@@ -32,6 +34,7 @@ def hp_mira():
     hp.NOISE=True
     hp.NOISE_MODIFIER=5
     hp.AVERAGE_OUTCOMES = False
+    hp.WF = True ## we made it
     return hp
 
 @pytest.fixture
@@ -504,9 +507,12 @@ def test_compute_implied_policy(ds_one_traj):
     assert all(bools)
 
 def test_practice(ds_one_traj_fitness):
-    reward, agent, policy, V = practice(ds_one_traj_fitness, dp_solution=True)
-    reward, agent, policy, V = practice(ds_one_traj_fitness, naive=True)
+    # reward, agent, policy, V = practice(ds_one_traj_fitness, dp_solution=True)
+    reward, agent, policy, V = practice(ds_one_traj_fitness, naive=False)
+    assert len(reward) != 0
 
+def test_ds_has_sensor(ds):
+    assert ds.env.sensor != None
 
 def test_mira_practice(ds_mira):
     reward, agent, policy, V = practice(ds_mira, dp_solution=True)
@@ -517,7 +523,7 @@ def test_compute_optimal_policy(ds_mira):
     policy,x = compute_optimal_policy(ds_mira, discount_rate= 0.001)
     policy2,x = compute_optimal_policy(ds_mira, discount_rate = 0.999)
     bools_list = []
-    for s in range(len(policy2)):
+    for s in range(laen(policy2)):
         #this checks for equivalence of policy for 
         bools = [policy[s][j] != policy2[s][j] for j in range(len(policy2[s]))]
         bools_list.append(bools)

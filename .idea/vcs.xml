@@ -3,5 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright/evo_dm_wright" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/evodm/notebooks/exploratory/evo_dm_wright/evo_dm_wright/evo_dm_wright/evo_dm_wright" vcs="Git" />
   </component>
 </project>

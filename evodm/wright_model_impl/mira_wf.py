@@ -15,17 +15,15 @@ def mira_env():
                    train_input='fitness')
     # The DrugSelector agent is for the RL algorithm. It requires an hp object.
     hp = hyperparameters()
-    hp.N = 4 # Ensure N is set for hyperparameters
-    hp.NUM_DRUGS = 15 # Ensure NUM_DRUGS is set for hyperparameters
-    hp.EPISODES = 500
-    hp.MIN_REPLAY_MEMORY_SIZE = 1000
-    hp.MINIBATCH_SIZE = 100
+    hp.N = 4  # Ensure N is set for hyperparameters
+    hp.NUM_DRUGS = 15  # Ensure NUM_DRUGS is set for hyperparameters
     learner_env = DrugSelector(hp=hp, drugs=drugs)
     learner_env_naive = DrugSelector(hp=hp, drugs=drugs)
-    return envdp, env, learner_env, learner_env_naive #, naive_learner_env # Removed for simplicity, can be added back if needed
+    return envdp, env, learner_env, learner_env_naive  # , naive_learner_env # Removed for simplicity, can be added back if needed
 
-#generate drug sequences using policies from backwards induction,
-#value iteration, or policy iteration
+
+# generate drug sequences using policies from backwards induction,
+# value iteration, or policy iteration
 def get_sequences(policy, env, num_episodes=10, episode_length=20, finite_horizon=True):
     """
     Simulates the environment for a number of episodes using a given policy.
@@ -61,12 +59,12 @@ def get_sequences(policy, env, num_episodes=10, episode_length=20, finite_horizo
             env.action = int(action_opt)
             env.step()
 
-            #save the optimal drug, time step, and episode number
+            # save the optimal drug, time step, and episode number
             opt_drug_list.append(env.action)
             time_step_list.append(j)
             ep_number_list.append(i)
             fitness_list.append(np.mean(env.fitness))
-    
+
     results_df = pd.DataFrame({
         'episode': ep_number_list,
         'time_step': time_step_list,
@@ -75,12 +73,13 @@ def get_sequences(policy, env, num_episodes=10, episode_length=20, finite_horizo
     })
     return results_df
 
+
 def main():
     """
     Main function to solve the MIRA MDP and evaluate the policies.
     """
     print("Initializing MIRA environments (DP and Simulation)...")
-    envdp, env, learner_env, learner_env_naive = mira_env() # Removed naive_learner_env from unpack
+    envdp, env, learner_env, learner_env_naive = mira_env()  # Removed naive_learner_env from unpack
 
     # --- Solve the MDP using different algorithms ---
     print("\nSolving MDP with Backwards Induction (Finite Horizon)...")
@@ -94,22 +93,17 @@ def main():
     print("\nSolving MDP with Policy Iteration...")
     policy_pi, V_pi = policy_iteration(envdp)
     print("Policy shape from Policy Iteration:", policy_pi)
-    
+
     # --- RL Agent Training  ---
     print("\nUsing non-naive RL to solve system:")
-    rewards_NN, agent_NN, _, __ = practice(learner_env, naive=False, prev_action=True, compute_implied_policy_bool=True)
-    policy_NN_one_hot = agent_NN.compute_implied_policy(update = True)
-    policy_NN = [np.argmax(a) for a in policy_NN_one_hot]
+    rewards_NN, agent_NN = practice(learner_env, naive=False, standard_practice=True, compute_implied_policy_bool=True)
+    policy_NN = agent_NN.compute_implied_policy(update=True)
     print("policy shape under non-naive RL: ", policy_NN)
 
     print("\nUsing naive RL agent to solve system...")
-    rewards_N, agent_N, _, __= practice(learner_env_naive, prev_action=False, standard_practice=True, compute_implied_policy_bool=True)
-    policy_N_one_hot = agent_N.compute_implied_policy(update = True)
-    policy_N = [np.argmax(a) for a in policy_N_one_hot]
+    reward, agent_N = practice(learner_env_naive, naive=True, standard_practice=True, compute_implied_policy_bool=True)
+    policy_N = agent_N.compute_implied_policy(update=True)
     print("policy shape under naive RL: ", policy_N)
-
-
-
 
     # --- Evaluate the policies by simulation ---
     print("\nSimulating policy from Backwards Induction...")
@@ -130,18 +124,18 @@ def main():
     print(pi_results.to_string())
     print("\nAverage fitness under PI policy:", pi_results['fitness'].mean())
 
-
     print("\nSimulating policy from Non-naive RL...")
-    RL_NN_results = get_sequences(policy_NN, env, num_episodes = 5, episode_length=envdp.nS, finite_horizon=True)
+    RL_NN_results = get_sequences(policy_NN, env, num_episodes=5, episode_length=envdp.nS, finite_horizon=True)
     print("RL NN results:")
     print(RL_NN_results.to_string())
     print("\nAverage fitness under RL_NN policy:", RL_NN_results['fitness'].mean())
 
     print("\nSimulating policy from naive RL...")
-    RL_N_results = get_sequences(policy_N, env, num_episodes = 5, episode_length=envdp.nS, finite_horizon=True)
+    RL_N_results = get_sequences(policy_N, env, num_episodes=5, episode_length=envdp.nS, finite_horizon=True)
     print("RL NN results:")
     print(RL_N_results.to_string())
     print("\nAverage fitness under RL_NN policy:", RL_N_results['fitness'].mean())
+
 
 if __name__ == "__main__":
     main()
