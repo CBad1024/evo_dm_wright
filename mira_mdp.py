@@ -83,6 +83,9 @@ def main():
     print("Initializing MIRA environments (DP and Simulation)...")
     envdp, env, learner_env, learner_env_naive = mira_env() # Removed naive_learner_env from unpack
 
+
+
+
     # --- Solve the MDP using different algorithms ---
     print("\nSolving MDP with Backwards Induction (Finite Horizon)...")
     policy_bi, V_bi = backwards_induction(envdp, num_steps=16)
@@ -95,6 +98,9 @@ def main():
     print("\nSolving MDP with Policy Iteration...")
     policy_pi, V_pi = policy_iteration(envdp)
     print("Policy shape from Policy Iteration:", policy_pi)
+
+    ## Print parameters
+    print("Batch Size: ", learner_env.hp.MINIBATCH_SIZE)
     
     # --- RL Agent Training  ---
     print("\nUsing non-naive RL to solve system:")

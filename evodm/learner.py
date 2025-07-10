@@ -70,6 +70,7 @@ class hyperparameters:
         self.TRAIN_INPUT = "state_vector"
         self.DELAY = 0
 
+
         # Exploration settings
         self.DISCOUNT = 0.99
         self.epsilon = 1  # lowercase because its not a constant
