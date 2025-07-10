@@ -1,3 +1,4 @@
 notebooks/exploratory/evo_dm_wright/
 .idea/
-#build/
+build/
+**/__pycache__/
