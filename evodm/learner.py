@@ -62,10 +62,10 @@ class hyperparameters:
 
     def __init__(self):
         # Model training settings
-        self.REPLAY_MEMORY_SIZE = 10000
+        self.REPLAY_MEMORY_SIZE = 100000
         self.MASTER_MEMORY = True
         self.MIN_REPLAY_MEMORY_SIZE = 1000
-        self.MINIBATCH_SIZE = 256
+        self.MINIBATCH_SIZE = 5000
         self.UPDATE_TARGET_EVERY = 310  # every 500 steps, update the target
         self.TRAIN_INPUT = "state_vector"
         self.DELAY = 0
