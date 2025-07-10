@@ -21,6 +21,7 @@ def mira_env():
     hp.EPISODES = 500
     hp.MIN_REPLAY_MEMORY_SIZE = 1000
     hp.MINIBATCH_SIZE = 500
+
     print("changed minibatch size: Minibatch = ", hp.MINIBATCH_SIZE)
     print("min replay memory size: ", hp.MIN_REPLAY_MEMORY_SIZE)
     print("num_episodes: ", hp.EPISODES)
